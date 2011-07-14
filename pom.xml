@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!--
+  vi:ts=2:sw=2:expandtab:
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <!-- Parent -->
+  <parent>
+    <groupId>org.jboss</groupId>
+    <artifactId>jboss-parent</artifactId>
+    <version>5</version>
+  </parent>
+
+  <!-- Model Information -->
+  <modelVersion>4.0.0</modelVersion>
+  
+    <!-- Artifact Information  -->
+  <groupId>org.jboss.as.testexample</groupId>
+  <artifactId>jboss-as-test-example</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <name>JBoss AS7 Test Example</name>
+  <url>http://www.jboss.org</url>
+  <description>Example for writing tests for the JBoss Application Server</description>
+  
+  <!-- Properties -->
+  <properties>
+
+    <!-- Versioning -->
+    <version.junit_junit>4.8.2</version.junit_junit>
+    <version.org.jboss.as>7.0.0.Final</version.org.jboss.as>
+
+  </properties>
+  
+  <!-- SCM 
+  
+  TODO: Fill this in when upstream is created
+  
+  <scm>
+    <connection>scm:git:git://github.com/shrinkwrap/shrinkwrap.git</connection>
+    <developerConnection>scm:git:git@github.com:shrinkwrap/shrinkwrap.git</developerConnection>
+    <url>https://github.com/shrinkwrap/shrinkwrap</url>
+  </scm> -->
+
+  <!-- Issues -->
+  <issueManagement>
+    <system>jira</system>
+    <url>http://issues.jboss.org/browse/AS7</url>
+  </issueManagement>
+
+  <!-- Licenses -->
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <!-- Plugin Configuration -->
+  <build>
+  
+    <!-- Plugin Management -->
+    <pluginManagement>
+    </pluginManagement>
+  
+      <plugins>
+      
+        <!-- Surefire -->
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+            <trimStackTrace>false</trimStackTrace>
+            <printSummary>true</printSummary>
+            <includes>
+              <include>**/*TestCase.java</include>
+              <include>**/*TestSuite.java</include>
+            </includes>
+            <forkMode>always</forkMode>
+          </configuration>
+        </plugin>
+      
+        <!-- Get AS and put into "target" -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>unpack</id>
+              <phase>process-test-classes</phase> <!-- So run before testing -->
+              <goals>
+                <goal>unpack</goal>
+              </goals>
+              <configuration>
+                <artifactItems>
+                  <artifactItem>
+                    <groupId>org.jboss.as</groupId>
+                    <artifactId>jboss-as-dist</artifactId>
+                    <version>${version.org.jboss.jbossas}</version>
+                    <type>zip</type>
+                    <overWrite>false</overWrite>
+                    <outputDirectory>${project.build.directory}</outputDirectory>
+                  </artifactItem>
+                </artifactItems>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+    
+    </plugins>
+  </build>
+  
+  <!-- Dependency Management -->
+  <dependencyManagement>
+    <dependencies>
+
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${version.junit_junit}</version>
+        <scope>test</scope>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.jboss.as</groupId>
+        <artifactId>jboss-as-api</artifactId>
+        <version>${version.org.jboss.as}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.jboss.as</groupId>
+        <artifactId>jboss-as-parent</artifactId>
+        <version>${version.org.jboss.as}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.as</groupId>
+        <artifactId>jboss-as-dist</artifactId>
+        <version>${version.org.jboss.as}</version>
+        <type>zip</type>
+        <scope>test</scope>
+      </dependency>
+
+    </dependencies>
+  </dependencyManagement>
+  
+  <!-- Dependencies -->
+  <dependencies>
+
+    <!-- Compile scope; allow the whole AS API -->
+    <dependency>
+      <groupId>org.jboss.as</groupId>
+      <artifactId>jboss-as-api</artifactId>
+      <version>${version.org.jboss.as}</version>
+      <type>pom</type>
+    </dependency>
+
+    <!-- Test Scope; allow anything here -->
+    <dependency>
+      <groupId>org.jboss.arquillian.junit</groupId>
+      <artifactId>arquillian-junit-container</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.as</groupId>
+      <artifactId>jboss-as-arquillian-container-managed</artifactId>
+      <version>${version.org.jboss.as}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.as</groupId>
+      <artifactId>jboss-as-build</artifactId>
+      <version>${version.org.jboss.as}</version>
+      <type>pom</type>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <repositories>
+    <repository>
+      <id>jboss-public-repository</id>
+      <name>JBoss Repository</name>
+      <url> https://repository.jboss.org/nexus/content/groups/public</url>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>jboss-public-repository</id>
+      <name>JBoss Repository</name>
+      <url> https://repository.jboss.org/nexus/content/groups/public</url>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories> 
+
+</project>
